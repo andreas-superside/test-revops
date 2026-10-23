@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workspace transfer test</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --text: #1d2433;
+    --muted: #5b6475;
+    --line: #d9dde5;
+    --accent: #1f5fbf;
+    --ok: #18794e;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14181f;
+      --text: #e8ebf2;
+      --muted: #9aa3b5;
+      --line: #2c3340;
+      --accent: #6aa3ff;
+      --ok: #4cc38a;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 32px 20px;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  main { max-width: 640px; margin: 0 auto; }
+  h1 { font-size: 1.5rem; margin: 0 0 4px; }
+  p.sub { color: var(--muted); margin: 0 0 24px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 600; font-size: 0.9rem; }
+  .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+  button {
+    font: inherit;
+    padding: 8px 16px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  button.secondary { background: transparent; color: var(--accent); }
+  button:focus-visible { outline: 3px solid var(--ok); outline-offset: 2px; }
+  #status { color: var(--ok); font-weight: 600; }
+  .bar { height: 14px; background: var(--line); border-radius: 7px; overflow: hidden; }
+  .bar > div { height: 100%; width: 0; background: var(--accent); transition: width 0.3s; }
+  code { background: var(--line); padding: 1px 6px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Workspace transfer test</h1>
+  <p class="sub">Static HTML page used to test Team to GitHub to Enterprise.</p>
+
+  <table>
+    <thead><tr><th>Check</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td>Page loads</td><td id="r-load">Pending</td></tr>
+      <tr><td>JavaScript runs</td><td id="r-js">Pending</td></tr>
+      <tr><td>Inline CSS applied</td><td id="r-css">Pending</td></tr>
+      <tr><td>Dark mode follows system</td><td id="r-theme">Pending</td></tr>
+      <tr><td>Rendered at</td><td id="r-time">Pending</td></tr>
+    </tbody>
+  </table>
+
+  <div class="row">
+    <button id="count">Clicked 0 times</button>
+    <button id="reset" class="secondary">Reset</button>
+    <span id="status"></span>
+  </div>
+
+  <div class="bar" aria-hidden="true"><div id="fill"></div></div>
+
+  <p class="sub" style="margin-top:24px">
+    Source file: <code>transfer-test.html</code>. No external scripts, fonts or network calls.
+  </p>
+</main>
+
+<script>
+  var n = 0;
+  var btn = document.getElementById('count');
+  var fill = document.getElementById('fill');
+  var status = document.getElementById('status');
+
+  function set(id, text) { document.getElementById(id).textContent = text; }
+
+  set('r-load', 'OK');
+  set('r-js', 'OK');
+  set('r-time', new Date().toLocaleString());
+
+  var bg = getComputedStyle(document.body).backgroundColor;
+  set('r-css', bg ? 'OK (background ' + bg + ')' : 'Failed');
+  set('r-theme', window.matchMedia('(prefers-color-scheme: dark)').matches ? 'Dark detected' : 'Light detected');
+
+  btn.addEventListener('click', function () {
+    n += 1;
+    btn.textContent = 'Clicked ' + n + (n === 1 ? ' time' : ' times');
+    fill.style.width = Math.min(n * 10, 100) + '%';
+    status.textContent = n >= 10 ? 'Interaction works' : '';
+  });
+
+  document.getElementById('reset').addEventListener('click', function () {
+    n = 0;
+    btn.textContent = 'Clicked 0 times';
+    fill.style.width = '0';
+    status.textContent = '';
+  });
+</script>
+</body>
+</html>
