@@ -28,8 +28,12 @@
   .label { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0; }
   h1 { font-size: 22px; font-weight: 600; margin: 0; text-wrap: balance; }
   .version { font-family: var(--mono); font-size: 32px; font-weight: 600; color: var(--accent); margin: 0; font-variant-numeric: tabular-nums; }
+  .banner { position: fixed; inset: 0 0 auto; z-index: 10; background: var(--accent); color: var(--surface); font-size: 14px; text-align: center; padding-block: calc(10px + env(safe-area-inset-top, 0px)) 10px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); overflow-wrap: anywhere; }
+  .banner a { color: inherit; font-weight: 600; }
   .meta { display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid var(--line); padding-top: 12px; font-family: var(--mono); font-size: 13px; color: var(--muted); }
 </style>
+
+<div class="banner" role="note">Dev copy. Use this link instead: <a href="https://claude.ai/artifact/AvM7xG3SixyxgdmMtbt4Ny">https://claude.ai/artifact/AvM7xG3SixyxgdmMtbt4Ny</a></div>
 
 <main class="tag">
   <p class="label">Throwaway release check</p>
