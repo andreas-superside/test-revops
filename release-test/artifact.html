@@ -1,0 +1,39 @@
+<title>Release Test</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap">
+<style>
+  /* Layout: one centered release tag on a quiet ground */
+  :root {
+    --bg: #f3f5f7; --surface: #ffffff; --fg: #1b2430; --muted: #5b6878; --line: #d6dde5; --accent: #2b5fd9;
+    --sans: "IBM Plex Sans", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --bg: #12161c; --surface: #1a2029; --fg: #e6ebf1; --muted: #93a0b0; --line: #2c3541; --accent: #7fa4ff; color-scheme: dark } }
+  :root[data-theme="dark"] {
+    --bg: #12161c; --surface: #1a2029; --fg: #e6ebf1; --muted: #93a0b0; --line: #2c3541; --accent: #7fa4ff; color-scheme: dark }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg); color: var(--fg); font-family: var(--sans);
+    display: grid; place-items: center;
+    padding-block: 32px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    box-sizing: border-box;
+  }
+  .tag {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+    padding: 28px 32px; display: grid; gap: 12px; width: min(100%, 360px); box-sizing: border-box;
+  }
+  .label { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0; }
+  h1 { font-size: 22px; font-weight: 600; margin: 0; text-wrap: balance; }
+  .version { font-family: var(--mono); font-size: 32px; font-weight: 600; color: var(--accent); margin: 0; font-variant-numeric: tabular-nums; }
+  .meta { display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid var(--line); padding-top: 12px; font-family: var(--mono); font-size: 13px; color: var(--muted); }
+</style>
+
+<main class="tag">
+  <p class="label">Throwaway release check</p>
+  <h1>Release Test</h1>
+  <p class="version">Version 1.0.0</p>
+  <div class="meta"><span>Date</span><time datetime="2026-11-09">2026-11-09</time></div>
+</main>
