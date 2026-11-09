@@ -1,31 +1,33 @@
-# Release Test
+# Team to Enterprise Release
 
 ## What it is
 
-A throwaway one-page artifact used to test the release flow from the Team workspace to the Enterprise workspace through GitHub. It shows:
+A RevOps proposal page for moving artifacts from a department Team workspace to the Enterprise workspace, with GitHub as the source. It covers:
 
-- Title: Release Test
-- Version: 1.0.0
-- Date: 2026-11-09
+- Part 1, artifact sharing: the four-step process, how to update after release, what every team needs, the pilot results and what is still to test.
+- Part 2, skill sharing: in the works, with open questions.
 
-It has no data, no scripts and no runtime capabilities.
+Version 1.2.0 replaces the earlier throwaway "Release Test" page in this folder. The Team and Enterprise links stay the same.
 
 ## How it was built
 
-1. Written by hand as a single HTML file (`artifact.html`) in a Claude Code cloud session on 2026-11-09.
-2. Styles are inline. The only external resource is IBM Plex Sans and IBM Plex Mono from Google Fonts, with system fallbacks.
+1. Provided by the owner as a finished single HTML file (`artifact.html`) and committed unchanged on 2026-11-09.
+2. Styles are inline. The only external resource is Inter Tight and Raleway from Google Fonts, with system fallbacks. No scripts, no data, no runtime capabilities.
 3. Supports light and dark themes through CSS color tokens. Works at phone width.
-4. Published as a private Claude artifact (Team): https://claude.ai/artifact/S6dWqJP3MVQ6kKyBV2YpYm
-5. `artifact.html` in this folder is byte-for-byte the file that was published.
+4. `artifact.html` in this folder is the clean release version. It never contains the "Dev copy" banner.
 
 ## Files
 
 | File | Purpose |
 |---|---|
-| `artifact.html` | The exact published page source |
+| `artifact.html` | The clean page source that Enterprise publishes |
 | `spec.md` | This description |
-| `release.json` | Release metadata: name, version, Team link, Enterprise link (empty until released), status |
+| `release.json` | Release metadata: name, version, Team link, Enterprise link, status |
+
+## Banner rule
+
+The Team copy (`team_link`) is published with a "Dev copy. Use this link instead: [enterprise_link]" banner added at publish time only. The banner is never committed here, so an Enterprise refresh always publishes a clean page.
 
 ## How to release
 
-In the Enterprise session, publish `release-test/artifact.html` from this repo unchanged as a new artifact, then set `enterprise_link` in `release.json` to the new URL and `status` to `released`.
+In the Enterprise session, republish `release-test/artifact.html` from this repo unchanged to the existing `enterprise_link`, keeping the same link, and set `status` to `published`.

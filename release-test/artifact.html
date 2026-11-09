@@ -1,39 +1,325 @@
-<title>Release Test</title>
+<title>Team to Enterprise Release</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Raleway:wght@400;500;600&display=swap">
 <style>
-  /* Layout: one centered release tag on a quiet ground */
-  :root {
-    --bg: #f3f5f7; --surface: #ffffff; --fg: #1b2430; --muted: #5b6878; --line: #d6dde5; --accent: #2b5fd9;
-    --sans: "IBM Plex Sans", system-ui, sans-serif;
-    --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+/* Layout: one calm column. Parts are separated by a heavy rule. Pilot findings sit as short lists, not cards, so the page stays easy to scan. */
+:root {
+  --font-display: 'Inter Tight', 'Helvetica Neue', Arial, sans-serif;
+  --font-body: 'Raleway', 'Helvetica Neue', Arial, sans-serif;
+  --bg: #F7F9F2;
+  --fg: #0A211F;
+  --fg-soft: rgba(10, 33, 31, .8);
+  --fg-softer: rgba(10, 33, 31, .62);
+  --line: rgba(10, 33, 31, .15);
+  --surface: #E6ECD6;
+  --primary: #0A211F;
+  --on-primary: #F7F9F2;
+  --radius-card: 16px;
+  --radius-pill: 999px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0A211F;
+    --fg: #F7F9F2;
+    --fg-soft: rgba(247, 249, 242, .8);
+    --fg-softer: rgba(247, 249, 242, .62);
+    --line: rgba(247, 249, 242, .15);
+    --surface: #17332F;
+    --primary: #D8FF85;
+    --on-primary: #0A211F;
+    color-scheme: dark;
   }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-    --bg: #12161c; --surface: #1a2029; --fg: #e6ebf1; --muted: #93a0b0; --line: #2c3541; --accent: #7fa4ff; color-scheme: dark } }
-  :root[data-theme="dark"] {
-    --bg: #12161c; --surface: #1a2029; --fg: #e6ebf1; --muted: #93a0b0; --line: #2c3541; --accent: #7fa4ff; color-scheme: dark }
-  html, body { height: 100%; }
-  body {
-    background: var(--bg); color: var(--fg); font-family: var(--sans);
-    display: grid; place-items: center;
-    padding-block: 32px;
-    padding-left: max(16px, env(safe-area-inset-left, 0px));
-    padding-right: max(16px, env(safe-area-inset-right, 0px));
-    box-sizing: border-box;
-  }
-  .tag {
-    background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
-    padding: 28px 32px; display: grid; gap: 12px; width: min(100%, 360px); box-sizing: border-box;
-  }
-  .label { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0; }
-  h1 { font-size: 22px; font-weight: 600; margin: 0; text-wrap: balance; }
-  .version { font-family: var(--mono); font-size: 32px; font-weight: 600; color: var(--accent); margin: 0; font-variant-numeric: tabular-nums; }
-  .meta { display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid var(--line); padding-top: 12px; font-family: var(--mono); font-size: 13px; color: var(--muted); }
+}
+:root[data-theme="dark"] {
+  --bg: #0A211F;
+  --fg: #F7F9F2;
+  --fg-soft: rgba(247, 249, 242, .8);
+  --fg-softer: rgba(247, 249, 242, .62);
+  --line: rgba(247, 249, 242, .15);
+  --surface: #17332F;
+  --primary: #D8FF85;
+  --on-primary: #0A211F;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  padding-block: 56px 72px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 880px; margin: 0 auto; display: flex; flex-direction: column; gap: 64px; }
+
+h1, h2, h3 { font-family: var(--font-display); font-weight: 500; line-height: 1.05; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(2.4rem, 6vw, 3.9rem); letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.6rem, 3.4vw, 2.1rem); letter-spacing: -0.01em; }
+h3 { font-size: 1.25rem; line-height: 1.2; }
+p { margin: 0; }
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .88em;
+  background: var(--surface);
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+.eyebrow {
+  font-family: var(--font-body);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .15em;
+  font-size: .8rem;
+  color: var(--fg-softer);
+}
+.hero { display: flex; flex-direction: column; gap: 20px; }
+.lede { font-size: 1.15rem; color: var(--fg-soft); max-width: 60ch; }
+
+.part { display: flex; flex-direction: column; gap: 48px; }
+.part-head { display: flex; flex-direction: column; gap: 10px; padding-top: 24px; border-top: 2px solid var(--fg); }
+.part-title-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; }
+.part-title { font-size: clamp(2rem, 4.6vw, 2.9rem); letter-spacing: -0.015em; }
+.status {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: .8rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  background: var(--primary);
+  color: var(--on-primary);
+  border-radius: var(--radius-pill);
+  padding: 6px 16px;
+}
+
+.section { display: flex; flex-direction: column; gap: 28px; }
+.section-head { display: flex; flex-direction: column; gap: 10px; }
+.section-head p { color: var(--fg-soft); max-width: 62ch; }
+
+/* Steps: order is information here, so they are numbered. */
+.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.step {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  column-gap: 20px;
+  padding-block: 24px;
+  border-top: 1px solid var(--line);
+}
+.step:last-child { border-bottom: 1px solid var(--line); }
+.num {
+  width: 48px; height: 48px;
+  border-radius: var(--radius-pill);
+  background: var(--primary);
+  color: var(--on-primary);
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.2rem;
+  display: grid; place-items: center;
+}
+.step-body { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.step-body p { color: var(--fg-soft); max-width: 62ch; }
+.where {
+  align-self: flex-start;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: .78rem;
+  letter-spacing: .04em;
+  border: 1px solid var(--fg-softer);
+  border-radius: var(--radius-pill);
+  padding: 3px 12px;
+  color: var(--fg-soft);
+}
+
+.pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  padding: 28px;
+  display: flex; flex-direction: column; gap: 12px;
+  min-width: 0;
+}
+.card p { color: var(--fg-soft); }
+.card .tag { font-family: var(--font-display); font-weight: 500; font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; color: var(--fg-softer); }
+
+.rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px 40px; margin: 0; padding: 0; list-style: none; }
+.rules li { padding-top: 14px; border-top: 1px solid var(--line); color: var(--fg-soft); }
+.rules strong { display: block; font-family: var(--font-display); font-weight: 500; color: var(--fg); font-size: 1.05rem; margin-bottom: 2px; }
+
+/* Findings lists */
+.findings { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.findings li {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  column-gap: 20px;
+  padding-block: 16px;
+  border-top: 1px solid var(--line);
+  color: var(--fg-soft);
+}
+.findings li:last-child { border-bottom: 1px solid var(--line); }
+.findings strong { font-family: var(--font-display); font-weight: 500; color: var(--fg); }
+.findings .k { font-family: var(--font-display); font-weight: 500; font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; color: var(--fg-softer); padding-top: 3px; }
+.findings .body { min-width: 0; }
+
+.open { border: 1px solid var(--line); border-radius: var(--radius-card); padding: 24px 28px; display: flex; flex-direction: column; gap: 14px; }
+.open ul { margin: 0; padding-left: 1.1em; display: flex; flex-direction: column; gap: 10px; color: var(--fg-soft); }
+.open li strong { color: var(--fg); font-family: var(--font-display); font-weight: 500; }
+
+@media (max-width: 520px) {
+  body { padding-block: 36px 56px; }
+  .wrap { gap: 48px; }
+  .step { grid-template-columns: 40px minmax(0, 1fr); column-gap: 14px; }
+  .num { width: 40px; height: 40px; font-size: 1.05rem; }
+  .card { padding: 22px; }
+  .findings li { grid-template-columns: minmax(0, 1fr); row-gap: 4px; }
+  .open { padding: 20px; }
+}
 </style>
 
-<main class="tag">
-  <p class="label">Throwaway release check</p>
-  <h1>Release Test</h1>
-  <p class="version">Version 1.1.0</p>
-  <div class="meta"><span>Date</span><time datetime="2026-11-09">2026-11-09</time></div>
+<main class="wrap">
+
+  <header class="hero">
+    <span class="eyebrow">RevOps proposal &middot; pilot results</span>
+    <h1>Build in Team. Share from Enterprise.</h1>
+    <p class="lede">One process for moving an artifact from a department Team workspace to the Enterprise workspace, so the whole company opens the same link. Heavy building stays on Team. Day-to-day use happens on Enterprise. The first pilot ran end to end. This page covers the process, what the pilot proved, and what we still need to test.</p>
+  </header>
+
+  <div class="part">
+    <div class="part-head">
+      <span class="eyebrow">Part 1</span>
+      <div class="part-title-row"><h2 class="part-title">Artifact sharing</h2></div>
+    </div>
+
+    <section class="section" aria-labelledby="how">
+      <div class="section-head">
+        <h2 id="how">Building and sharing, step by step</h2>
+        <p>The owner runs four steps. GitHub carries the file between the two workspaces, because the workspaces cannot talk to each other directly.</p>
+      </div>
+      <ol class="steps">
+        <li class="step">
+          <span class="num" aria-hidden="true">1</span>
+          <div class="step-body">
+            <span class="where">Team workspace</span>
+            <h3>Build the artifact</h3>
+            <p>Create and iterate in your department's Team workspace. Experiments and heavy usage stay on the Team plan.</p>
+          </div>
+        </li>
+        <li class="step">
+          <span class="num" aria-hidden="true">2</span>
+          <div class="step-body">
+            <span class="where">Team workspace to GitHub</span>
+            <h3>Publish to Enterprise</h3>
+            <p>Run the release skill. It saves <code>artifact.html</code>, <code>spec.md</code> and <code>release.json</code> to your GitHub repo and gives you a one-line prompt to paste into Enterprise. The saved <code>artifact.html</code> is always the clean version.</p>
+          </div>
+        </li>
+        <li class="step">
+          <span class="num" aria-hidden="true">3</span>
+          <div class="step-body">
+            <span class="where">Enterprise workspace</span>
+            <h3>Release in Enterprise</h3>
+            <p>Paste the prompt. Claude reads the folder from GitHub, publishes the file unchanged, and you choose who can open it. The new link is saved to <code>release.json</code> in the same folder.</p>
+          </div>
+        </li>
+        <li class="step">
+          <span class="num" aria-hidden="true">4</span>
+          <div class="step-body">
+            <span class="where">Team workspace</span>
+            <h3>Finish the release</h3>
+            <p>Run the finish step. The Team copy is republished with a banner: "Dev copy. Use this link instead", pointing to the Enterprise artifact. The banner is added only when the Team copy is published and is never saved to GitHub.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="updates">
+      <div class="section-head">
+        <h2 id="updates">Updating after release</h2>
+        <p>Changes move in one direction only: GitHub, then Team, then GitHub, then Enterprise. Nobody edits the Enterprise copy.</p>
+      </div>
+      <div class="pair">
+        <div class="card">
+          <span class="tag">You changed the artifact</span>
+          <h3>Release again from Team</h3>
+          <p>Change it in Team, run the same steps, and the Enterprise artifact updates in place. The link stays the same.</p>
+        </div>
+        <div class="card">
+          <span class="tag">Enterprise looks out of date</span>
+          <h3>Refresh from GitHub</h3>
+          <p>In Enterprise, tell Claude to refresh the artifact from GitHub. It republishes whatever version is committed.</p>
+        </div>
+      </div>
+      <ul class="rules">
+        <li><strong>Share the Enterprise link only.</strong>The Team link is the dev copy and may not open for everyone.</li>
+        <li><strong>GitHub holds the source.</strong>The file that gets released is the file in the repo, never a rebuild from a prompt.</li>
+      </ul>
+    </section>
+
+    <section class="section" aria-labelledby="req">
+      <div class="section-head">
+        <h2 id="req">What every team needs to start</h2>
+        <p>Two requirements.</p>
+      </div>
+      <div class="pair">
+        <div class="card">
+          <span class="tag">Requirement 1</span>
+          <h3>The release skill, mandatory</h3>
+          <p>One skill that describes and runs this whole process. It is installed in both the Team and the Enterprise workspaces, and everyone uses it.</p>
+        </div>
+        <div class="card">
+          <span class="tag">Requirement 2</span>
+          <h3>A GitHub account for everyone</h3>
+          <p>A company-owned account in the company organization, connected in both workspaces. Work then survives when a user is deactivated.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="pilot">
+      <div class="section-head">
+        <h2 id="pilot">What the pilot showed</h2>
+        <p>A throwaway artifact went through the full flow, including an update, using Claude Code sessions on a Team login and an Enterprise login with one private GitHub repo.</p>
+      </div>
+      <ul class="findings">
+        <li><span class="k">Worked</span><span class="body"><strong>Team to GitHub.</strong> The artifact was published and its three files were pushed to the repo.</span></li>
+        <li><span class="k">Worked</span><span class="body"><strong>GitHub to Enterprise.</strong> The Enterprise session published the file unchanged and wrote its link back to <code>release.json</code>.</span></li>
+        <li><span class="k">Worked</span><span class="body"><strong>The banner.</strong> The Team copy read the Enterprise link from <code>release.json</code> and showed the "Dev copy" banner.</span></li>
+        <li><span class="k">Worked</span><span class="body"><strong>Updates.</strong> A new version released from GitHub kept the same Enterprise link, and the Enterprise page showed no banner.</span></li>
+        <li><span class="k">Changed</span><span class="body"><strong>The banner is never committed.</strong> The first run saved the banner into <code>artifact.html</code>, so the next Enterprise refresh would have carried it over. The repo file stays clean and the banner exists only on the Team copy.</span></li>
+        <li><span class="k">Changed</span><span class="body"><strong>The commit step used Claude Code.</strong> Pushing to a private repo needs the Claude GitHub App installed on that repo. Building still happens wherever people build today.</span></li>
+        <li><span class="k">Checked</span><span class="body"><strong>No GitHub Pro needed.</strong> Pro is for personal accounts. A free organization allows unlimited private repos. A paid organization plan is needed only for enforced reviews such as protected branches and required reviewers.</span></li>
+      </ul>
+    </section>
+
+    <section class="open" aria-labelledby="totest">
+      <h3 id="totest">Still to test before rollout</h3>
+      <ul>
+        <li><strong>Who can open what.</strong> Whether a Team link opens for a user who is only in Enterprise, and whether Enterprise can be set to open for the whole organization.</li>
+        <li><strong>Company ownership.</strong> The pilot repo sits under a personal namespace. Repeat it with company-owned accounts and repos in the company organization, with the Claude GitHub App installed by an organization admin.</li>
+        <li><strong>Teams without Claude Code.</strong> Whether a regular chat can commit to GitHub, or needs a connector with write access. The fallbacks are a Claude Code session for the commit, or uploading the files in GitHub by hand.</li>
+        <li><strong>One-click release.</strong> Whether a button in the Team artifact can open a prefilled chat that starts the release or refresh.</li>
+        <li><strong>A second department.</strong> A team outside RevOps runs the process end to end using the release skill.</li>
+      </ul>
+    </section>
+  </div>
+
+  <div class="part">
+    <div class="part-head">
+      <span class="eyebrow">Part 2</span>
+      <div class="part-title-row">
+        <h2 class="part-title">Skill sharing</h2>
+        <span class="status">In the works</span>
+      </div>
+    </div>
+    <p class="lede">Skills will follow the same principle as artifacts, with GitHub as the source. The release route for skills is being defined.</p>
+    <section class="open" aria-labelledby="skillopen">
+      <h3 id="skillopen">Open questions</h3>
+      <ul>
+        <li><strong>Distribution.</strong> Whether a plugin can be installed organization-wide in both workspaces, and whether an update reaches both automatically.</li>
+        <li><strong>Review.</strong> Skills change how Claude behaves for everyone who uses them, so they likely need review before release. Enforcing that on GitHub needs a paid organization plan.</li>
+      </ul>
+    </section>
+  </div>
+
 </main>
